@@ -1,0 +1,91 @@
+source_leads:
+  description: >
+    Search for companies and contacts matching this ICP criteria:
+    {icp_criteria}
+
+    Find up to {max_leads} lead candidates. For each candidate, gather:
+    - Company name, domain, industry, size, and location
+    - At least one contact with name, email, title, and seniority
+    - Check the CRM for duplicates before including
+
+    Return results as a JSON list of LeadCandidate objects.
+  expected_output: >
+    A JSON array of LeadCandidate objects, each containing company
+    details and at least one contact. Example:
+    [{"company_name": "Acme Corp", "company_domain": "acme.com", ...}]
+  agent: lead_sourcer
+
+qualify_leads:
+  description: >
+    Score and qualify each lead candidate against the ICP:
+    {icp_criteria}
+
+    Using these scoring weights:
+    {scoring_weights}
+
+    For each candidate:
+    1. Research the company for buying signals (funding, hiring, tech adoption)
+    2. Score from 0-100 based on ICP fit
+    3. Assign tier: Hot (80+), Warm (50-79), Cold (<50)
+    4. Document your reasoning
+
+    Candidates to evaluate:
+    {lead_candidates}
+  expected_output: >
+    A JSON array of QualifiedLead objects with score, tier, reasoning,
+    and buying signals for each candidate.
+  agent: lead_qualifier
+
+route_leads:
+  description: >
+    Route each qualified lead to the appropriate sales team using these rules:
+    {routing_rules}
+
+    For each lead, evaluate the rules in priority order (lower number = higher priority).
+    Use the first matching rule. If no rule matches, assign to the default team.
+
+    Available sales reps and their teams can be looked up via the CRM tool.
+
+    Qualified leads to route:
+    {qualified_leads}
+  expected_output: >
+    A JSON array of RoutedLead objects, each with the assigned team,
+    rep details, and routing reasoning.
+  agent: lead_router
+
+set_appointments:
+  description: >
+    For each routed lead, do the following:
+    1. Write a personalized outreach email referencing the company's
+       specific situation and buying signals
+    2. Check calendar availability for the assigned rep
+    3. Include a booking link in the email
+    4. Send the email
+    5. Notify the assigned rep via Slack
+
+    Routed leads:
+    {routed_leads}
+  expected_output: >
+    A JSON array of OutreachResult objects, each indicating whether
+    the email was sent, what the email contained, and whether a
+    meeting was booked.
+  agent: appointment_setter
+
+manage_pipeline:
+  description: >
+    Orchestrate the full SDR pipeline for this run:
+    1. Delegate lead sourcing with ICP: {icp_criteria}
+    2. Pass results to qualification
+    3. Route qualified leads
+    4. Set appointments for routed leads
+
+    Track metrics at each stage. If any stage fails, log the error
+    and continue with remaining leads. Produce a summary report.
+  expected_output: >
+    A pipeline execution summary including:
+    - Leads sourced count
+    - Leads qualified count (by tier)
+    - Leads routed count (by team)
+    - Appointments set count
+    - Any errors encountered
+  agent: pipeline_manager
