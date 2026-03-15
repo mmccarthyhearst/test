@@ -60,7 +60,9 @@ class Lead(TimestampMixin, Base):
 
     # Franchise expansion tracking
     franchise_brand: Mapped[str | None] = mapped_column(String(255))
-    franchise_network_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True))
+    franchise_network_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("companies.id")
+    )
     is_network_expansion: Mapped[bool] = mapped_column(Boolean, default=False)
 
     # Relationships

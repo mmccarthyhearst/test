@@ -26,7 +26,7 @@ class Company(TimestampMixin, Base):
     description: Mapped[str | None] = mapped_column(Text)
 
     # Franchise-specific fields
-    is_franchisor: Mapped[bool] = mapped_column(Boolean, default=False)
+    is_franchisor: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
     franchise_brand: Mapped[str | None] = mapped_column(String(255), index=True)
     franchise_count: Mapped[int | None] = mapped_column(Integer)
     franchise_fee_range: Mapped[str | None] = mapped_column(String(100))
@@ -43,6 +43,11 @@ class Company(TimestampMixin, Base):
     # Relationships
     contacts: Mapped[list["Contact"]] = relationship(back_populates="company")  # noqa: F821
     leads: Mapped[list["Lead"]] = relationship(back_populates="company")  # noqa: F821
+    franchise_network: Mapped["Company | None"] = relationship(
+        "Company",
+        remote_side="Company.id",
+        foreign_keys="[Company.franchise_network_id]",
+    )
 
     def __repr__(self) -> str:
         return f"<Company {self.name} ({self.domain})>"
