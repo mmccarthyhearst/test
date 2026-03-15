@@ -29,6 +29,7 @@ class Settings(BaseSettings):
 
     # Enrichment
     APOLLO_API_KEY: str = ""
+    DUCKDUCKGO_MAX_RESULTS: int = 5
 
     # Email
     EMAIL_PROVIDER: str = "sendgrid"  # "sendgrid" or "resend"
