@@ -3,7 +3,7 @@
 import enum
 import uuid
 
-from sqlalchemy import Enum, ForeignKey, Integer, JSON, String, Text
+from sqlalchemy import Boolean, Enum, ForeignKey, Integer, JSON, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -57,6 +57,11 @@ class Lead(TimestampMixin, Base):
     assigned_rep_name: Mapped[str | None] = mapped_column(String(255))
     routing_reasoning: Mapped[str | None] = mapped_column(Text)
     disqualification_reason: Mapped[str | None] = mapped_column(Text)
+
+    # Franchise expansion tracking
+    franchise_brand: Mapped[str | None] = mapped_column(String(255))
+    franchise_network_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True))
+    is_network_expansion: Mapped[bool] = mapped_column(Boolean, default=False)
 
     # Relationships
     company: Mapped["Company"] = relationship(back_populates="leads")  # noqa: F821
